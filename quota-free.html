@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quota Black</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Basic Reset */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* =========================================================
+                        VARIABLES
+        ========================================================= */
+        
+         :root {
+            --primary: #000000;
+            --primary-dark: #333333;
+            --text: #333;
+            --text-light: #777;
+            --bg: #fff;
+            --card-bg: #f8f9fa;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.25);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+        /* =========================================================
+           LAYOUT / CONTAINER
+        ========================================================= */
+        
+        .container {
+            max-width: 960px;
+            width: 100%;
+            margin: auto;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        /* Header with buttons */
+        
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .app-title {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        /* =========================================================
+           CARD COMPONENT
+        ========================================================= */
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 24px var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .card-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .card-header h2 {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .expand-icon {
+            color: var(--text-light);
+            transition: transform 0.3s ease;
+        }
+        
+        .card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .card-content {
+            padding: 0 16px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+        }
+        
+        .card.expanded .card-content {
+            max-height: 1000px;
+            opacity: 1;
+            padding: 16px;
+        }
+        /* =========================================================
+           FORM INPUTS
+        ========================================================= */
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        /* =========================================================
+   ITEM LIST WITH HIDDEN SCROLL & MOBILE SCROLL
+========================================================= */
+        
+        .items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+            /* Hide scrollbar for desktop */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+        }
+        
+        .items-container::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari, Opera */
+        }
+        /* Mobile-specific scroll styling */
+        
+        @media (max-width: 768px) {
+            .items-container {
+                max-height: 60vh;
+                /* Use viewport height for better mobile experience */
+                overflow-y: auto;
+                /* Show scrollbar on mobile for better UX */
+                scrollbar-width: thin;
+                /* Firefox */
+                scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+                -ms-overflow-style: auto;
+                /* IE and Edge */
+                padding-right: 8px;
+                /* Add space for scrollbar */
+            }
+            .items-container::-webkit-scrollbar {
+                display: block;
+                /* Show scrollbar on mobile */
+                width: 6px;
+            }
+            .items-container::-webkit-scrollbar-track {
+                background: transparent;
+                border-radius: 10px;
+            }
+            .items-container::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 10px;
+            }
+            .items-container::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 0, 0, 0.5);
+            }
+            /* Add scroll indicator for better UX on mobile */
+            .items-container::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 20px;
+                background: linear-gradient(transparent, rgba(248, 249, 250, 0.8));
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .items-container.scrollable::after {
+                opacity: 1;
+            }
+        }
+        
+        .item-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+        
+        .item-row input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .item-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        /* Desktop layout - horizontal grid */
+        
+        .item-card-body {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            align-items: end;
+        }
+        
+        .item-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .item-field.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .item-field label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        
+        .item-field input {
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Mobile layout - vertical stack */
+        
+        @media (max-width: 768px) {
+            .item-card-body {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .item-field {
+                width: 100%;
+            }
+            /* Specific styling for Rate and GST input fields on mobile */
+            .item-field:nth-child(3) input.item-rate,
+            .item-field:nth-child(4) input.item-gst {
+                width: 100%;
+                /* Full width in vertical layout */
+                max-width: 100%;
+                text-align: left;
+                /* Left align in vertical layout */
+            }
+            /* Remove any previous fixed widths for mobile */
+            .item-field:nth-child(3) input.item-rate {
+                width: 100%;
+                min-width: auto;
+            }
+            .item-field:nth-child(4) input.item-gst {
+                width: 100%;
+                min-width: auto;
+            }
+            /* Amount field styling in vertical layout */
+            .item-amount {
+                justify-content: flex-start;
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--primary);
+                padding: 12px 0;
+                border-top: 1px solid var(--border);
+                margin-top: 8px;
+            }
+        }
+        /* Extra small mobile devices - further refinements */
+        
+        @media (max-width: 480px) {
+            .item-card {
+                padding: 12px;
+            }
+            .item-card-body {
+                gap: 10px;
+            }
+            .item-field input {
+                padding: 10px;
+                font-size: 16px;
+                /* Larger for better touch targets */
+            }
+            .item-field label {
+                font-size: 13px;
+                font-weight: 500;
+                margin-bottom: 6px;
+            }
+            .item-amount {
+                font-size: 18px;
+                padding: 14px 0;
+            }
+            /* Improve item header for mobile */
+            .item-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+            .item-title {
+                font-size: 16px;
+                font-weight: 700;
+            }
+            .btn-danger {
+                align-self: flex-end;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+        
+        .item-amount {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 8px 0;
+        }
+        /* Responsive adjustments for desktop */
+        
+        @media (min-width: 769px) {
+            .item-card-body {
+                grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+                gap: 12px;
+            }
+            .item-amount {
+                justify-content: flex-end;
+            }
+        }
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+        
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+        
+        .btn-danger:hover {
+            background: var(--primary-dark);
+        }
+        
+        .add-btn {
+            display: block;
+            margin-top: 12px;
+            background: var(--primary);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px 0;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .add-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .preview-btn,
+        .download-btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            width: 100%;
+            /* full width inside flex */
+        }
+        
+        .preview-btn:hover,
+        .download-btn:hover {
+            background: var(--primary-dark);
+        }
+        /* Flex layout for the button container */
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        /* Optional: control width on larger screens */
+        
+        @media (min-width: 600px) {
+            .preview-btn,
+            .download-btn {
+                width: auto;
+            }
+        }
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        
+        @media screen and (max-width: 768px) {
+            .item-card-body {
+                grid-template-columns: 1fr 1fr;
+            }
+            .item-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .item-amount {
+                justify-content: flex-start;
+            }
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        @media screen and (min-width: 769px) {
+            .card-content {
+                max-height: 1000px !important;
+                opacity: 1 !important;
+                padding: 16px !important;
+            }
+            .expand-icon {
+                display: none;
+            }
+        }
+        /* =========================================================
+           TOTALS SECTION - FIXED COLORS
+        ========================================================= */
+        
+        .totals-section {
+            margin-top: 24px;
+            margin-right: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e5e5;
+            position: relative;
+            overflow: hidden;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            /* CENTERED */
+        }
+        
+        .totals-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+        
+        .totals-row span:first-child {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .totals-row span:last-child {
+            font-weight: 600;
+            color: #181717;
+            text-align: right;
+            min-width: 80px;
+            /* Ensure consistent alignment */
+        }
+        
+        .totals-row.grand-total {
+            margin-top: 8px;
+            padding: 16px;
+            background: #181717;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-left: -20px;
+            margin-right: -20px;
+            margin-bottom: -20px;
+        }
+        
+        .totals-row.grand-total span {
+            color: #fff;
+        }
+        
+        .totals-row.grand-total span:last-child {
+            font-size: 24px;
+        }
+        /* Responsive adjustments */
+        
+        @media screen and (max-width: 480px) {
+            .totals-section {
+                padding: 16px;
+                margin-top: 20px;
+            }
+            .totals-row {
+                flex-direction: row;
+                align-items: center;
+                gap: 4px;
+            }
+            .totals-row span:last-child {
+                align-self: auto;
+            }
+            .grand-total {
+                margin: 16px 0 -16px 0 !important;
+                padding: 16px !important;
+                border-radius: 12px;
+            }
+        }
+        /* =========================================================
+           PREVIEW MODAL
+        ========================================================= */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal.active {
+            display: block;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        /* A4 Setup */
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            background: #f5f5f5;
+        }
+        /* MAIN CONTAINER */
+        
+        .pdf-template {
+            width: 210mm;
+            height: 297mm;
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .pdf-template * {
+            box-sizing: border-box;
+        }
+        /* HEADER */
+        
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+        }
+        
+        .pdf-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .pdf-brand {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+        }
+        /* QUOTATION META */
+        
+        .pdf-meta {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            padding-right: 12mm;
+            /* small right-side gap */
+        }
+        
+        .pdf-meta-grid {
+            display: grid;
+            gap: 6px;
+            /* normal row spacing */
+            width: fit-content;
+            /* prevents huge center gap */
+        }
+        
+        .pdf-meta-row {
+            display: grid;
+            grid-template-columns: auto auto;
+            /* label + value */
+            gap: 40px;
+            /* small gap between them */
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .pdf-meta-label {
+            font-weight: 600;
+        }
+        /* FROM / TO ADDRESSES */
+        /* ===============================
+   GRID LAYOUT FOR FROM / TO
+================================= */
+        
+        .pdf-addresses {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        /* COMMON BOX STYLE */
+        
+        .pdf-address-box {
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 120px;
+        }
+        /* ===============================
+            FROM BOX (UNIQUE STYLE)
+        ================================= */
+        
+        .from-box {
+            background: #d4d4d4;
+            border-left: 4px solid #d4d4d4;
+        }
+        /* ===============================
+            TO BOX (UNIQUE STYLE + RIGHT GAP)
+        ================================= */
+        
+        .to-box {
+            background: #d4d4d4;
+            border-left: 4px solid #d4d4d4;
+            margin-right: 15px;
+            /* right side gap */
+        }
+        /* TITLE STYLE */
+        
+        .pdf-address-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        /* CONTENT STYLE */
+        
+        .pdf-address-content {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        /* ITEMS TABLE */
+        
+        .pdf-table {
+            width: calc(100% - 15px);
+            /* Subtract right margin from width */
+            border-collapse: collapse;
+            margin-top: 5px;
+            margin-right: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .pdf-table th {
+            background: #181717;
+            color: #fff;
+            padding: 12px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        .pdf-table td {
+            padding: 12px 10px;
+            font-size: 12px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .pdf-table tr:last-child td {
+            border-bottom: none;
+        }
+        /* TOTALS SECTION */
+        
+        .pdf-totals {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 25px;
+            margin-right: 30px;
+            /* RIGHT SIDE GAP */
+        }
+        
+        .pdf-totals-table {
+            width: 250px;
+            border-collapse: collapse;
+        }
+        
+        .pdf-totals-table td {
+            padding: 8px 10px;
+            font-size: 13px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .pdf-grand-total {
+            border-top: 2px solid #000;
+            font-size: 16px;
+            font-weight: 700;
+            padding-top: 12px !important;
+        }
+        /* AMOUNT IN WORDS */
+        
+        .pdf-amount-words {
+            text-align: right;
+            margin-bottom: 60px;
+            /* Increased gap after amount in words */
+            margin-right: 15px;
+            /* Match table right margin */
+            font-size: 12px;
+            font-style: italic;
+            max-width: 300px;
+            margin-left: auto;
+            word-break: break-word;
+            line-height: 1.5;
+            /* Better readability for wrapped text */
+        }
+        /* NOTES SECTION */
+        
+        .pdf-notes {
+            background: #f6f6f6;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            font-size: 11.5px;
+            line-height: 1.5;
+        }
+        /* SIGNATURE - MOVED UP */
+        
+        .pdf-signature {
+            margin-top: 80px;
+            /* More space from content above */
+            margin-bottom: 100px;
+            /* Push signature lower in the page */
+            text-align: right;
+            margin-right: 15px;
+            /* Match table right margin */
+        }
+        
+        .pdf-signature-line {
+            width: 220px;
+            margin-left: auto;
+            margin-top: 60px;
+            /* More space above signature line */
+            padding-top: 8px;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* FOOTER - ADJUSTED POSITION */
+        
+        .pdf-footer {
+            text-align: center;
+            width: calc(100% - 30mm);
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+            color: #666;
+            font-size: 10px;
+            position: absolute;
+            bottom: 15mm;
+            left: 15mm;
+        }
+        /* PRINT MODE */
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .pdf-template {
+                margin: 0;
+                padding: 15mm !important;
+                box-shadow: none;
+                width: 210mm;
+                height: 297mm;
+            }
+            /* Avoid page breaks inside important elements */
+            .pdf-header,
+            .pdf-addresses,
+            .pdf-table,
+            .pdf-totals,
+            .pdf-signature {
+                page-break-inside: avoid;
+            }
+            .pdf-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+        }
+        /* =========================================================
+           DOWNLOAD STYLES
+        ========================================================= */
+        
+        .preview-container {
+            font-family: 'Inter', sans-serif;
+            width: 90%;
+            max-width: 800px;
+            padding: 20px;
+            color: #333333;
+            line-height: 1.4;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 14px;
+            padding-right: 10px;
+            scrollbar-width: none;
+        }
+        
+        .preview-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .quotation-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            position: relative;
+        }
+        
+        .header-center {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .quotation-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #181717;
+            margin: 0;
+        }
+        
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: rgb(19, 18, 18);
+            margin: 0;
+        }
+        
+        .created-by {
+            font-size: 14px;
+            color: #666666;
+            text-align: center;
+        }
+        /* =========================================================
+                    QUOTATION META
+        ========================================================= */
+        
+        .body-quotation-info {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .body-meta-grid {
+            display: grid;
+            gap: 12px;
+            width: 260px;
+        }
+        
+        .body-meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .body-meta-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333333;
+        }
+        
+        .body-meta-value {
+            font-size: 14px;
+            font-weight: 400;
+            color: #333333;
+            text-align: right;
+        }
+        /* =========================================================
+            FROM / TO BOXES
+        ========================================================= */
+        
+        .from-to-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        /* Box styling */
+        
+        .address-box {
+            background-color: #FFF4E5;
+            padding: 22px;
+            border-radius: 14px;
+            min-height: 150px;
+            height: auto;
+        }
+        /* Title */
+        
+        .address-title {
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: #333333;
+        }
+        /* Paragraphs */
+        
+        .address-content p {
+            margin: 5px 0;
+            font-size: 13px;
+            font-weight: 400;
+        }
+        /* OPTIONAL — tighter layout on small screens */
+        
+        @media (max-width: 480px) {
+            .from-to-section {
+                gap: 20px;
+            }
+            .address-box {
+                padding: 18px;
+            }
+        }
+        /* =========================================================
+            ITEMS TABLE
+        ========================================================= */
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+        
+        .preview-table thead th {
+            background-color: #181717;
+            color: #ffffff;
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 0px;
+        }
+        
+        .preview-table td {
+            padding: 14px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+            height: 52px;
+        }
+        
+        .preview-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        /* =========================================================
+            TOTALS SECTION
+        ========================================================= */
+        
+        .totals-section-preview {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
+        
+        .totals-table {
+            width: 260px;
+            border-collapse: collapse;
+        }
+        
+        .totals-table td {
+            padding: 10px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .totals-label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .grand-total-preview {
+            border-top: 2px solid #000;
+            font-size: 25px;
+            font-weight: 700;
+        }
+        /* =========================================================
+   NOTES & TERMS
+========================================================= */
+        
+        .notes-terms-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333333;
+        }
+        
+        .notes-section,
+        .terms-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 6px;
+        }
+        
+        .notes-section p,
+        .terms-section p {
+            margin: 0;
+            white-space: pre-line;
+            font-size: 14px;
+        }
+        /* =========================================================
+   FOOTER / SIGNATURE
+========================================================= */
+        
+        .quotation-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+            color: #666666;
+            font-size: 12px;
+        }
+        
+        .signature-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        
+        .signature-box {
+            text-align: right;
+            width: 250px;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 60px;
+            width: 200px;
+            margin-left: auto;
+        }
+        
+        .amount-in-words {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .amount-in-words p {
+            margin: 0;
+            font-size: 14px;
+        }
+        /* =========================================================
+            RESPONSIVE
+            ========================================================= */
+        
+        @media (max-width: 768px) {
+            .preview-container {
+                padding: 10px;
+            }
+            .quotation-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .from-to-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .totals-section-preview {
+                justify-content: flex-start;
+            }
+            .totals-table {
+                width: 100%;
+            }
+            .signature-section {
+                justify-content: flex-end;
+            }
+            .signature-box {
+                width: 100%;
+                text-align: right;
+            }
+            .signature-line {
+                margin-left: auto;
+                margin-right: 0;
+            }
+            .amount-in-words {
+                text-align: right;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .preview-table th,
+            .preview-table td {
+                padding: 6px 4px;
+            }
+            .quotation-title {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header with buttons -->
+        <div class="app-header">
+            <h1 class="app-title">Quota Black</h1>
+            <div class="header-buttons">
+                <button class="preview-btn" id="previewBtn"><i class="fas fa-eye"></i> Preview</button>
+                <button class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+        </div>
+
+        <!-- Quotation Details -->
+        <div class="card" id="quotationDetailsCard">
+            <div class="card-header">
+                <h2><i class="fas fa-file-invoice"></i> Quotation Details</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="form-group">
+                    <label>Quotation Number</label>
+                    <input type="text" id="quotationNumber" placeholder="Q-00001">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quotation Date</label>
+                        <input type="date" id="quotationDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="dueDate">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- From Card -->
+        <div class="card" id="fromCard">
+            <div class="card-header">
+                <h2><i class="fas fa-building"></i> From</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="businessName" placeholder="Your Company Name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="businessEmail" placeholder="your@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="businessContact" placeholder="+1 234 567 8900">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="businessAddress" rows="3" placeholder="Your business address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>GST Number</label>
+                    <input type="text" id="businessGST" placeholder="GSTIN Number">
+                </div>
+            </div>
+        </div>
+
+        <!-- To Card -->
+        <div class="card" id="toCard">
+            <div class="card-header">
+                <h2><i class="fas fa-user"></i> To (Customer)</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="clientName" placeholder="Client Name">
+                </div>
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="clientCompany" placeholder="Client Company">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="clientEmail" placeholder="client@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="clientContact" placeholder="+1 234 567 8900">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="clientAddress" rows="3" placeholder="Client address"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Card -->
+        <div class="card" id="productsCard">
+            <div class="card-header">
+                <h2><i class="fas fa-list"></i> Products</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="items-container" id="itemsContainer">
+                    <div class="item-card">
+                        <div class="item-card-header">
+                            <div class="item-title">Item #1</div>
+                            <button class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="item-card-body">
+                            <div class="item-field">
+                                <label>Item Name</label>
+                                <input type="text" class="item-name" placeholder="Item name">
+                            </div>
+                            <div class="item-field">
+                                <label>Quantity</label>
+                                <input type="number" class="item-qty" value="1" min="1">
+                            </div>
+                            <div class="item-field">
+                                <label>Rate (₹)</label>
+                                <input type="number" class="item-rate" value="0" step="0.01" min="0">
+                            </div>
+                            <div class="item-field">
+                                <label>GST (%)</label>
+                                <input type="number" class="item-gst" value="0" min="0" max="100">
+                            </div>
+                            <div class="item-field">
+                                <label>Amount</label>
+                                <div class="item-amount">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-btn" id="addItemBtn"><i class="fas fa-plus"></i> Add Item</button>
+
+                <!-- Totals Section -->
+                <div class="totals-section">
+                    <div class="totals-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">0.00</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>Total GST:</span>
+                        <span id="totalGst">0.00</span>
+                    </div>
+                    <div class="totals-row grand-total">
+                        <span>Grand Total:</span>
+                        <span id="grandTotal">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="card" id="notesCard">
+            <div class="card-header">
+                <h2><i class="fas fa-sticky-note"></i> Notes</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes" rows="4" placeholder="Enter any additional notes here"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="card" id="termsCard">
+            <div class="card-header">
+                <h2><i class="fas fa-sticky-note"></i> Terms & Conditions</h2>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="card-content">
+                <div class="form-group">
+                    <label>Terms & Conditions</label>
+                    <textarea id="terms" rows="4" placeholder="Enter terms and conditions here"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span id="closePreviewBtn" class="close">&times;</span>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced mobile scroll functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemsContainer = document.getElementById('itemsContainer');
+
+            // Function to check if container is scrollable
+            function checkScrollable() {
+                if (itemsContainer.scrollHeight > itemsContainer.clientHeight) {
+                    itemsContainer.classList.add('scrollable');
+                } else {
+                    itemsContainer.classList.remove('scrollable');
+                }
+            }
+
+            // Check on load and when items are added/removed
+            checkScrollable();
+
+            // Observe changes to the items container
+            const observer = new MutationObserver(checkScrollable);
+            if (itemsContainer) {
+                observer.observe(itemsContainer, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+
+            // Add touch scroll momentum for better mobile experience
+            if ('ontouchstart' in window) {
+                let startY;
+                let scrollTop;
+
+                itemsContainer.addEventListener('touchstart', function(e) {
+                    startY = e.touches[0].pageY;
+                    scrollTop = this.scrollTop;
+                });
+
+                itemsContainer.addEventListener('touchmove', function(e) {
+                    const y = e.touches[0].pageY;
+                    const walk = (startY - y) * 2; // Scroll speed multiplier
+                    this.scrollTop = scrollTop + walk;
+                });
+            }
+        });
+        let expandedCard = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize card expansion functionality
+            document.querySelectorAll('.card-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const card = header.closest('.card');
+
+                    if (expandedCard && expandedCard !== card) {
+                        expandedCard.classList.remove('expanded');
+                    }
+
+                    card.classList.toggle('expanded');
+                    expandedCard = card.classList.contains('expanded') ? card : null;
+                });
+            });
+
+            // Auto-fill dates
+            const today = new Date().toISOString().split('T')[0];
+            const quotationDate = document.getElementById('quotationDate');
+            if (quotationDate) quotationDate.value = today;
+
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 30);
+            const dueDateField = document.getElementById('dueDate');
+            if (dueDateField) dueDateField.value = dueDate.toISOString().split('T')[0];
+
+            // Initialize first item calculation
+            const firstItemCard = document.querySelector('.item-card');
+            if (firstItemCard) {
+                calculateItemAmount(firstItemCard);
+            }
+        });
+
+        /* ============================
+           ITEM HANDLING
+        ============================ */
+        const itemsContainer = document.getElementById('itemsContainer');
+        const addItemBtn = document.getElementById('addItemBtn');
+        let itemCount = 1;
+
+        function calculateItemAmount(itemCard) {
+            const qty = parseFloat(itemCard.querySelector('.item-qty').value) || 0;
+            const rate = parseFloat(itemCard.querySelector('.item-rate').value) || 0;
+            const gst = parseFloat(itemCard.querySelector('.item-gst').value) || 0;
+
+            const subtotal = qty * rate;
+            const tax = subtotal * gst / 100;
+
+            itemCard.querySelector('.item-amount').textContent = (subtotal + tax).toFixed(2);
+            updateTotals();
+        }
+
+        function updateTotals() {
+            let subtotal = 0;
+            let totalGst = 0;
+
+            document.querySelectorAll('.item-card').forEach(itemCard => {
+                const qty = parseFloat(itemCard.querySelector('.item-qty').value) || 0;
+                const rate = parseFloat(itemCard.querySelector('.item-rate').value) || 0;
+                const gst = parseFloat(itemCard.querySelector('.item-gst').value) || 0;
+
+                const itemSubtotal = qty * rate;
+                const itemTax = itemSubtotal * gst / 100;
+
+                subtotal += itemSubtotal;
+                totalGst += itemTax;
+            });
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('totalGst').textContent = totalGst.toFixed(2);
+            document.getElementById('grandTotal').textContent = (subtotal + totalGst).toFixed(2);
+        }
+
+        function addItemCard() {
+            itemCount++;
+
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+
+            itemCard.innerHTML = `
+                <div class="item-card-header">
+                    <div class="item-title">Item #${itemCount}</div>
+                    <button class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button>
+                </div>
+
+                <div class="item-card-body">
+                    <div class="item-field">
+                        <label>Item Name</label>
+                        <input type="text" class="item-name" placeholder="Item name">
+                    </div>
+
+                    <div class="item-field">
+                        <label>Quantity</label>
+                        <input type="number" class="item-qty" value="1" min="1">
+                    </div>
+
+                    <div class="item-field">
+                        <label>Rate (₹)</label>
+                        <input type="number" class="item-rate" value="0" step="0.01" min="0">
+                    </div>
+
+                    <div class="item-field">
+                        <label>GST (%)</label>
+                        <input type="number" class="item-gst" value="0" min="0" max="100">
+                    </div>
+
+                    <div class="item-field">
+                        <label>Amount</label>
+                        <div class="item-amount">0.00</div>
+                    </div>
+                </div>
+            `;
+
+            itemsContainer.appendChild(itemCard);
+
+            itemCard.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => calculateItemAmount(itemCard));
+            });
+
+            itemCard.querySelector('.remove-item').addEventListener('click', () => {
+                itemCard.remove();
+                updateTotals();
+            });
+
+            itemCard.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        if (addItemBtn) {
+            addItemBtn.addEventListener('click', addItemCard);
+        }
+
+        // Initialize existing items
+        document.querySelectorAll('.item-card').forEach(itemCard => {
+            itemCard.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => calculateItemAmount(itemCard));
+            });
+
+            itemCard.querySelector('.remove-item').addEventListener('click', () => {
+                itemCard.remove();
+                updateTotals();
+            });
+        });
+
+        /* ============================
+           AMOUNT IN WORDS FUNCTION
+        ============================ */
+        function numberToWords(num) {
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            if (num === 0) return 'Zero Rupees';
+
+            let words = '';
+
+            // Handle rupees
+            let rupees = Math.floor(num);
+            const paise = Math.round((num - rupees) * 100);
+
+            if (rupees > 0) {
+                // Handle crores (10,000,000)
+                if (rupees >= 10000000) {
+                    const crores = Math.floor(rupees / 10000000);
+                    if (crores < 20) {
+                        words += ones[crores];
+                    } else {
+                        words += tens[Math.floor(crores / 10)];
+                        if (crores % 10 > 0) {
+                            words += ' ' + ones[crores % 10];
+                        }
+                    }
+                    words += ' Crore ';
+                    rupees %= 10000000;
+                }
+
+                // Handle lakhs (100,000)
+                if (rupees >= 100000) {
+                    const lakhs = Math.floor(rupees / 100000);
+                    if (lakhs < 20) {
+                        words += ones[lakhs];
+                    } else {
+                        words += tens[Math.floor(lakhs / 10)];
+                        if (lakhs % 10 > 0) {
+                            words += ' ' + ones[lakhs % 10];
+                        }
+                    }
+                    words += ' Lakh ';
+                    rupees %= 100000;
+                }
+
+                // Handle thousands
+                if (rupees >= 1000) {
+                    const thousands = Math.floor(rupees / 1000);
+                    if (thousands < 20) {
+                        words += ones[thousands];
+                    } else {
+                        words += tens[Math.floor(thousands / 10)];
+                        if (thousands % 10 > 0) {
+                            words += ' ' + ones[thousands % 10];
+                        }
+                    }
+                    words += ' Thousand ';
+                    rupees %= 1000;
+                }
+
+                // Handle hundreds
+                if (rupees >= 100) {
+                    words += ones[Math.floor(rupees / 100)] + ' Hundred ';
+                    rupees %= 100;
+                }
+
+                // Handle remaining
+                if (rupees > 0) {
+                    if (words !== '') words += 'and ';
+
+                    if (rupees < 20) {
+                        words += ones[rupees];
+                    } else {
+                        words += tens[Math.floor(rupees / 10)];
+                        if (rupees % 10 > 0) {
+                            words += ' ' + ones[rupees % 10];
+                        }
+                    }
+                }
+
+                words += ' Rupees';
+            }
+
+            // Handle paise
+            if (paise > 0) {
+                if (words !== '') words += ' and ';
+
+                if (paise < 20) {
+                    words += ones[paise];
+                } else {
+                    words += tens[Math.floor(paise / 10)];
+                    if (paise % 10 > 0) {
+                        words += ' ' + ones[paise % 10];
+                    }
+                }
+
+                words += ' Paise';
+            }
+
+            return words.trim();
+        }
+        /*=============================================================================================================================
+                /* ============================
+                   PREVIEW & DOWNLOAD
+                ============================ */
+
+        // OPEN PREVIEW
+        document.getElementById("previewBtn").addEventListener("click", previewQuotation);
+
+        // DOWNLOAD PDF - FIXED VERSION
+        document.getElementById("downloadBtn").addEventListener("click", downloadPDF);
+
+        // CLOSE PREVIEW
+        document.getElementById("closePreviewBtn").addEventListener("click", () => {
+            document.getElementById("previewModal").classList.remove("active");
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // ---- PREVIEW FUNCTION ----
+        function previewQuotation() {
+            const data = collectQuotationData();
+            document.getElementById("previewContent").innerHTML = generatePreviewHTML(data);
+            document.getElementById("previewModal").classList.add("active");
+        }
+
+        // ---- FIXED DOWNLOAD PDF FUNCTION (NO EXTRA PAGE) ----
+        function downloadPDF() {
+            const data = collectQuotationData();
+
+            // Create a separate clean PDF DOM
+            const element = document.createElement('div');
+            element.className = 'pdf-template';
+            element.innerHTML = generatePDFHTML(data);
+
+            // Hidden PDF container
+            const pdfContainer = document.createElement('div');
+            pdfContainer.style.position = 'fixed';
+            pdfContainer.style.left = '-9999px';
+            pdfContainer.style.top = '0';
+            pdfContainer.appendChild(element);
+            document.body.appendChild(pdfContainer);
+
+            // FIXED OPTIONS (no page overflow / no blank second page)
+            const options = {
+                margin: 0,
+                filename: `quotation-${data.quotationNumber || 'unnamed'}.pdf`,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                },
+                pagebreak: {
+                    mode: ['avoid-all'] // Prevents auto page split
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+            html2pdf().set({
+                margin: 0, // prevents white space & layout shift
+                filename: 'file.pdf',
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            }).from(element).save();
+
+            html2pdf()
+                .set(options)
+                .from(element)
+                .save()
+                .then(() => {
+                    document.body.removeChild(pdfContainer);
+                })
+                .catch(error => {
+                    console.error('PDF generation error:', error);
+                    document.body.removeChild(pdfContainer);
+                    alert('Error generating PDF. Please try again.');
+                });
+        }
+
+        // ---- COLLECT ALL DATA ----
+        function collectQuotationData() {
+            const items = [];
+
+            document.querySelectorAll(".item-card").forEach(item => {
+                const qty = parseFloat(item.querySelector(".item-qty").value) || 0;
+                const rate = parseFloat(item.querySelector(".item-rate").value) || 0;
+                const gst = parseFloat(item.querySelector(".item-gst").value) || 0;
+                const subtotal = qty * rate;
+                const tax = subtotal * gst / 100;
+
+                items.push({
+                    name: item.querySelector(".item-name").value || "Unnamed Item",
+                    qty: qty,
+                    rate: rate,
+                    gst: gst,
+                    amount: (subtotal + tax).toFixed(2)
+                });
+            });
+
+            const grandTotal = parseFloat(document.getElementById('grandTotal').textContent) || 0;
+            const amountInWords = numberToWords(grandTotal);
+
+            return {
+                businessName: document.getElementById("businessName").value,
+                businessEmail: document.getElementById("businessEmail").value,
+                businessContact: document.getElementById("businessContact").value,
+                businessAddress: document.getElementById("businessAddress").value,
+                businessGST: document.getElementById("businessGST").value,
+                clientName: document.getElementById("clientName").value,
+                clientCompany: document.getElementById("clientCompany").value,
+                clientEmail: document.getElementById("clientEmail").value,
+                clientContact: document.getElementById("clientContact").value,
+                clientAddress: document.getElementById("clientAddress").value,
+                quotationNumber: document.getElementById("quotationNumber").value,
+                quotationDate: document.getElementById("quotationDate").value,
+                dueDate: document.getElementById("dueDate").value,
+                notes: document.getElementById("notes").value,
+                terms: document.getElementById("terms").value,
+                items: items,
+                subtotal: document.getElementById("subtotal").textContent,
+                totalGst: document.getElementById("totalGst").textContent,
+                grandTotal: document.getElementById("grandTotal").textContent,
+                amountInWords: amountInWords
+            };
+        }
+
+        // ---- GENERATE PREVIEW HTML ----
+        function generatePreviewHTML(data) {
+            const itemsHTML = data.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.rate.toFixed(2)}</td>
+                    <td>${item.gst}%</td>
+                    <td>${item.amount}</td>
+                </tr>
+            `).join('');
+
+            const renderOptionalField = (value, label, format = '') => {
+                if (!value) return '';
+                const formattedValue = format ? `${format}: ${value}` : value;
+                return `<p>${formattedValue}</p>`;
+            };
+
+            const renderAddressSection = (type, fields) => {
+                const {
+                    name,
+                    company,
+                    email,
+                    contact,
+                    address,
+                    gst
+                } = fields;
+                return `
+                    <div class="address-box ${type}-address">
+                        <div class="address-title">${type === 'from' ? 'From' : 'To'}</div>
+                        <div class="address-content">
+                            <p><strong>${name || (type === 'from' ? 'Your Business Name' : 'Client Name')}</strong></p>
+                            ${renderOptionalField(company, 'Company name')}
+                            ${renderOptionalField(email, 'Email')}
+                            ${renderOptionalField(contact, type === 'from' ? 'Phone' : 'Phone no')}
+                            ${renderOptionalField(gst, 'GST')}
+                            ${renderOptionalField(address, 'Address')}
+                        </div>
+                    </div>
+                `;
+            };
+
+            const renderNotesAndTerms = () => {
+                    if (!data.notes && !data.terms) return '';
+                    return `
+                    <div class="notes-terms-section">
+                        ${data.notes ? `
+                        <div class="notes-section">
+                            <div class="section-title">Notes</div>
+                            <p>${data.notes}</p>
+                        </div>` : ''}
+                        ${data.terms ? `
+                        <div class="terms-section">
+                            <div class="section-title">Terms & Conditions</div>
+                            <p>${data.terms}</p>
+                        </div>` : ''}
+                    </div>
+                `;
+            };
+
+            return `
+                <div class="preview-container">
+                    <!-- Header Section - Only Quotation and Brand Name -->
+                    <div class="quotation-header">
+                        <div class="header-center">
+                            <div class="quotation-title">QUOTATION</div>
+                            <div class="brand-title">Created by Quota</div>
+                        </div>
+                    </div>
+
+                    <!-- Body Content - Everything else goes here -->
+                    <div class="quotation-body">
+                        <!-- Quotation Info -->
+                        <div class="body-quotation-info">
+                            <div class="body-meta-grid">
+                                <div class="body-meta-row">
+                                    <div class="body-meta-label">Quotation Number:</div>
+                                    <div class="body-meta-value">${data.quotationNumber || 'Not specified'}</div>
+                                </div>
+                                <div class="body-meta-row">
+                                    <div class="body-meta-label">Quotation Date:</div>
+                                    <div class="body-meta-value">${data.quotationDate || 'Not specified'}</div>
+                                </div>
+                                <div class="body-meta-row">
+                                    <div class="body-meta-label">Due Date:</div>
+                                    <div class="body-meta-value">${data.dueDate || 'Not specified'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- From/To Section -->
+                        <div class="from-to-section">
+                            ${renderAddressSection('from', {
+                                name: data.businessName,
+                                email: data.businessEmail,
+                                contact: data.businessContact,
+                                gst: data.businessGST,
+                                address: data.businessAddress
+                            })}
+                            ${renderAddressSection('to', {
+                                name: data.clientName,
+                                company: data.clientCompany,
+                                email: data.clientEmail,
+                                contact: data.clientContact,
+                                address: data.clientAddress
+                            })}
+                        </div>
+
+                        <!-- Items Table -->
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Item Description</th>
+                                    <th>Qty</th>
+                                    <th>Rate</th>
+                                    <th>GST</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>${itemsHTML}</tbody>
+                        </table>
+
+                        <!-- Totals Section -->
+                        <div class="totals-section-preview">
+                            <div class="totals-preview">
+                                <table class="totals-table">
+                                    <tr>
+                                        <td>Subtotal:</td>
+                                        <td>${data.subtotal}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total GST:</td>
+                                        <td>${data.totalGst}</td>
+                                    </tr>
+                                    <tr class="grand-total-preview">
+                                        <td><strong>Grand Total:</strong></td>
+                                        <td><strong>${data.grandTotal}</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Amount in Words and Signature Section -->
+                        <div class="amount-in-words">
+                            <p><strong>Amount in Words:</strong> ${data.amountInWords}</p>
+                        </div>
+
+                        <div class="signature-section">
+                            <div class="signature-box">
+                                <div class="signature-line"></div>
+                                <p><strong>Authorized Signature</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Notes & Terms -->
+                        ${renderNotesAndTerms()}
+
+                        <!-- Footer -->
+                        <div class="quotation-footer">
+                            <p>Thank you for your business!</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- GENERATE PDF HTML - COMPLETELY SEPARATE TEMPLATE ----
+        function generatePDFHTML(data) {
+            const itemsHTML = data.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.rate.toFixed(2)}</td>
+                    <td>${item.gst}%</td>
+                    <td>${item.amount}</td>
+                </tr>
+            `).join('');
+
+            const renderOptionalField = (value, label) => {
+                if (!value) return '';
+                return `<p>${label}: ${value}</p>`;
+            };
+
+            return `
+                <div class="pdf-template">
+                    <!-- PDF Header -->
+                    <div class="pdf-header">
+                        <div class="pdf-title">QUOTATION</div>
+                        <div class="pdf-brand">Created by Quota</div>
+                    </div>
+
+                    <!-- Quotation Meta Info -->
+                    <div class="pdf-meta">
+                        <div class="pdf-meta-grid">
+                            <div class="pdf-meta-row">
+                                <span>Quotation Number:</span>
+                                <span>${data.quotationNumber || 'Not specified'}</span>
+                            </div>
+                            <div class="pdf-meta-row">
+                                <span>Quotation Date:</span>
+                                <span>${data.quotationDate || 'Not specified'}</span>
+                            </div>
+                            <div class="pdf-meta-row">
+                                <span>Due Date:</span>
+                                <span>${data.dueDate || 'Not specified'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                   <!-- FROM / TO ADDRESSES -->
+<div class="pdf-addresses">
+
+    <div class="pdf-address-box from-box">
+        <div class="pdf-address-title">From</div>
+        <div class="pdf-address-content">
+            <p><strong>${data.businessName || 'Your Business Name'}</strong></p>
+            ${renderOptionalField(data.businessEmail, 'Email')}
+            ${renderOptionalField(data.businessContact, 'Phone')}
+            ${renderOptionalField(data.businessGST, 'GST')}
+            ${data.businessAddress ? `<p>Address: ${data.businessAddress}</p>` : ''}
+        </div>
+    </div>
+
+    <div class="pdf-address-box to-box">
+        <div class="pdf-address-title">To</div>
+        <div class="pdf-address-content">
+            <p><strong>${data.clientName || 'Client Name'}</strong></p>
+            ${renderOptionalField(data.clientCompany, 'Company')}
+            ${renderOptionalField(data.clientEmail, 'Email')}
+            ${renderOptionalField(data.clientContact, 'Phone no')}
+            ${data.clientAddress ? `<p>Address: ${data.clientAddress}</p>` : ''}
+        </div>
+    </div>
+
+</div>
+
+
+                    <!-- Items Table -->
+                    <table class="pdf-table">
+                        <thead>
+                            <tr>
+                                <th>Item Description</th>
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <th>GST</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHTML}</tbody>
+                    </table>
+
+                    <!-- Totals Section -->
+                    <div class="pdf-totals">
+                        <table class="pdf-totals-table">
+                            <tr>
+                                <td>Subtotal:</td>
+                                <td>${data.subtotal}</td>
+                            </tr>
+                            <tr>
+                                <td>Total GST:</td>
+                                <td>${data.totalGst}</td>
+                            </tr>
+                            <tr class="pdf-grand-total">
+                                <td><strong>Grand Total:</strong></td>
+                                <td><strong>${data.grandTotal}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Amount in Words -->
+                    <div class="pdf-amount-words">
+                        <p><strong>Amount in Words:</strong> ${data.amountInWords}</p>
+                    </div>
+
+                    <!-- Authorized Signature -->
+                    <div class="pdf-signature">
+                        <div class="pdf-signature-line"></div>
+                        <p><strong>Authorized Signature</strong></p>
+                    </div>
+
+                    <!-- Notes & Terms -->
+                    ${data.notes ? `
+                    <div class="pdf-notes">
+                        <p><strong>Notes:</strong> ${data.notes}</p>
+                    </div>` : ''}
+
+                    ${data.terms ? `
+                    <div class="pdf-notes">
+                        <p><strong>Terms & Conditions:</strong> ${data.terms}</p>
+                    </div>` : ''}
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+
+</html>
